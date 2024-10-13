@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eye Tracking Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.1/tracking-min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        #video { display: none; } /* Hide video */
+    </style>
+</head>
+<body>
+
+<h1>Eye Tracking Test</h1>
+<p id="text">
+    This is a sample text. The system will track your eyes to determine if you read the entire content.
+</p>
+
+<video id="video" autoplay></video>
+
+<script>
+    // Start video streaming from the user's webcam
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            document.getElementById('video').srcObject = stream;
+        });
+
+    // Set up tracking
+    tracking.Camera = {
+        // Custom camera settings can be added here
+    };
+
+    tracking.track('#video', new tracking.ObjectTracker('eye'), { camera: true });
+
+    // Listen for eye tracking events
+    tracking.on('track', function(event) {
+        if (event.data.length > 0) {
+            // Eye detected
+            console.log("Eyes detected");
+            // Here you can capture gaze data and send it to your Flask API
+        } else {
+            // No eye detected
+            console.log("No eyes detected");
+        }
+    });
+</script>
+
+</body>
+</html>
