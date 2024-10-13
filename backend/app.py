@@ -2,12 +2,14 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+# Endpoint to receive gaze data
 @app.route('/track', methods=['POST'])
 def track():
     data = request.json
     gaze_data = data.get('gazeData')
-    
-    # Simple logic to check if the user covered most of the text
+
+    # Here you can add your logic to analyze gaze_data
+    # Example: Check if gaze data covers a significant portion of the text
     if gaze_data and len(gaze_data) > 10:  # Example condition
         return jsonify({"text_read": True})
     else:
