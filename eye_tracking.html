@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eye Tracking Test</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tracking.js/1.1.1/tracking-min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
         #video { display: none; } /* Hide video */
+        #text { width: 60%; margin: auto; }
     </style>
 </head>
 <body>
@@ -20,30 +20,43 @@
 <video id="video" autoplay></video>
 
 <script>
+    let gazeData = []; // Array to hold gaze data
+
     // Start video streaming from the user's webcam
     navigator.mediaDevices.getUserMedia({ video: true })
         .then(function(stream) {
             document.getElementById('video').srcObject = stream;
+            trackEyes(); // Start tracking eyes
         });
 
-    // Set up tracking
-    tracking.Camera = {
-        // Custom camera settings can be added here
-    };
+    function trackEyes() {
+        // Use a simple timer to collect gaze data every second
+        setInterval(() => {
+            const gazePoint = { x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight }; // Simulating gaze points
+            gazeData.push(gazePoint);
 
-    tracking.track('#video', new tracking.ObjectTracker('eye'), { camera: true });
-
-    // Listen for eye tracking events
-    tracking.on('track', function(event) {
-        if (event.data.length > 0) {
-            // Eye detected
-            console.log("Eyes detected");
-            // Here you can capture gaze data and send it to your Flask API
-        } else {
-            // No eye detected
-            console.log("No eyes detected");
-        }
-    });
+            // Send gaze data to Flask API every 5 seconds
+            if (gazeData.length % 5 === 0) {
+                fetch('http://localhost:5000/track', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ gazeData: gazeData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    // If the text was read, you can notify the user or take further action
+                    if (data.text_read) {
+                        alert("You have read the text!");
+                    } else {
+                        alert("You did not read the text!");
+                    }
+                });
+            }
+        }, 1000); // Collect gaze data every second
+    }
 </script>
 
 </body>
