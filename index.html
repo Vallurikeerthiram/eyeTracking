@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eye Tracking</title>
+  <script src="https://cdn.jsdelivr.net/npm/webgazer"></script>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin: 50px; }
+    #text { width: 60%; margin: auto; }
+  </style>
+</head>
+<body>
+
+<h1>Eye Tracking Test</h1>
+
+<p id="text">
+  This is a sample text. The system will track your eyes to determine if you read the entire content.
+</p>
+
+<script>
+  // Start gaze tracking using WebGazer.js
+  webgazer.setGazeListener((data, timestamp) => {
+    if (data) {
+      console.log(`X: ${data.x}, Y: ${data.y}`); // Capture and process this data later
+      // Optionally send data to the back-end API
+    }
+  }).begin();
+
+  // Optionally, you can add a calibration feature here if needed
+</script>
+
+</body>
+</html>
